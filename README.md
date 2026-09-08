@@ -67,8 +67,8 @@ The solution follows clean architectural separation and domain-driven practices 
 
 ```json
 {
-“ConnectionStrings”: {
-“DefaultConnection”: “Server=localhost;Database=CharityAdminDb;Trusted_Connection=True;TrustServerCertificate=True;”
+"ConnectionStrings": {
+"DefaultConnection": "Server=localhost;Database=CharityAdminDb;Trusted_Connection=True;TrustServerCertificate=True;"
 }
 }
 ```
