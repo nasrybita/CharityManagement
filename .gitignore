@@ -1,0 +1,58 @@
+# Build results
+bin/
+obj/
+
+#...
+# Remove appsettings.Development.json
+AdminPanel.Api/appsettings.Development.json
+AdminPanel.Ui/appsettings.Development.json
+
+
+#...
+PROJECT_OVERVIEW.md
+structure.txt
+
+
+# Visual Studio specific
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.slnLaunch.user
+
+# Rider
+.idea/
+
+# ASP.NET Core
+appsettings.*.local.json
+
+# Logs
+*.log
+
+# NuGet
+packages/
+*.nupkg
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Publish output
+publish/
+dist/
+
+# Frontend/node if ever used later
+node_modules/
+
+# EF Core migrations snapshot cache / generated artifacts
+*.cache
+*.g.cs
+*.AssemblyInfo.cs
+project.assets.json
+project.nuget.cache
+
+# Uploaded runtime files
+AdminPanel.Api/wwwroot/uploads/
+AdminPanel.UI/wwwroot/uploads/
+/cls
