@@ -23,13 +23,15 @@ The solution follows clean architectural separation and domain-driven practices 
 
 
 
-✨ Key Features
-Charity Management: Full profile orchestration with branding assets (logos, banners) and city lookups.
-Campaign Workflow Engine: Lifecycle management for campaigns with role-based status transitions (CampaignStatus).
-Social & Category Tagging: Many-to-many bindings (CharityCategory, SocialCharity) for dynamic social channels and categorizations.
-Role-Based Access Control (RBAC): Admin users hierarchy (AdminUserType), secure password hashing, and token-based JWT infrastructure.
-File Management Subsystem: Centralized media handling (IFileStorageService) for logos and campaign banners.
-Rich Dashboard UI: Built on top of Vuexy admin dashboard with responsive DataTables, AJAX-driven CRUD modals, and toast notifications.
+## ✨ Key Features
+
+
+* **Charity Management:** Full profile orchestration with branding assets (logos, banners) and city lookups.
+* **Campaign Workflow Engine:** Lifecycle management for campaigns with role-based status transitions (`CampaignStatus`).
+* **Social & Category Tagging:** Many-to-many bindings (`CharityCategory`, `SocialCharity`) for dynamic social channels and categorizations.
+* **Role-Based Access Control (RBAC):** Admin users hierarchy (`AdminUserType`), secure password hashing, and token-based JWT infrastructure.
+* **File Management Subsystem:** Centralized media handling (`IFileStorageService`) for logos and campaign banners.
+* **Rich Dashboard UI:** Built on top of Vuexy admin dashboard with responsive DataTables, AJAX-driven CRUD modals, and toast notifications.
 
 
 
