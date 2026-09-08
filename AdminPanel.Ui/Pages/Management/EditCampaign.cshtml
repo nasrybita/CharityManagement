@@ -1,0 +1,368 @@
+﻿@page
+@model AdminPanel.Ui.Pages.Management.EditCampaignModel
+
+@{
+    ViewData["Title"] = "ویرایش کمپین";
+}
+
+@section Styles {
+    <!-- Select2 -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+
+    <!-- Persian DatePicker -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css" />
+
+    <style>
+        #campaign-banner-container {
+            min-width: 280px;
+            min-height: 100px;
+        }
+
+        #campaign-banner-preview {
+            width: 100%;
+            max-width: 650px;
+            max-height: 220px;
+            object-fit: cover;
+        }
+
+        #remove-campaign-banner-btn {
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            font-weight: bold;
+        }
+    </style>
+}
+
+<!-- اطلاعات موردنیاز JavaScript -->
+<meta name="access-token" content="@User.FindFirst("AccessToken")?.Value" />
+<meta name="user-type" content="@Model.UserType" />
+<meta name="user-charity-id" content="@Model.CharityId" />
+
+<script>
+    const apiBaseUrl = "https://localhost:7209";
+    const campaignListUrl = "/Management/Campaigns";
+</script>
+
+<!-- شناسه کمپینی که باید از API دریافت شود -->
+<input type="hidden" id="campaign-id" value="@Model.CampaignId" />
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">ویرایش کمپین</h4>
+
+    <a asp-page="/Management/Campaigns" class="btn btn-outline-secondary">
+        <i class="bx bx-arrow-back me-1"></i>
+        بازگشت به فهرست کمپین‌ها
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header border-bottom">
+        <h5 class="card-title mb-0">فرم اطلاعات کمپین</h5>
+    </div>
+
+    <div class="card-body pt-4">
+        <form id="editCampaignForm" enctype="multipart/form-data">
+
+
+            <!-- باکس هشدار جدید در مورد وضعیت کمپین فعال -->
+            <div class="alert alert-warning d-flex align-items-center mb-4" id="campaign-status-alert" style="display: none !important;">
+                <i class="bx bx-error-circle me-2 fs-4"></i>
+                <div>
+                    <strong>توجه:</strong> این کمپین در حال حاضر در وضعیت <span id="alert-status-name" class="fw-bold">فعال</span> قرار دارد.
+                    امکان ذخیره تغییرات و اطلاعات جدید در وضعیت فعال وجود ندارد.
+                    جهت اعمال هرگونه تغییر، ابتدا از پایین فرم وضعیت کمپین را به حالت تعلیق درآورده، تغییرات خود را اعمال کنید و سپس ذخیره نمایید.
+                </div>
+            </div>
+
+
+
+            <!-- فیلدهای مخفی موردنیاز UpdateCampaignRequestDto -->
+            <input type="hidden"
+                   id="edit-campaign-id"
+                   name="Id"
+                   value="@Model.CampaignId" />
+
+            <!-- پس از دریافت اطلاعات کمپین توسط JavaScript مقداردهی می‌شود -->
+            <input type="hidden"
+                   id="edit-campaign-status"
+                   name="CampaignStatus"
+                   value="1" />
+
+            <!-- BannerId قبلی؛ هنگام حذف بنر توسط JS خالی می‌شود -->
+            <input type="hidden"
+                   id="edit-campaign-banner-id"
+                   name="BannerId"
+                   value="" />
+
+            <!-- هنگام حذف بنر توسط دکمه ضربدر، مقدار آن true می‌شود -->
+            <input type="hidden"
+                   id="remove-campaign-banner"
+                   name="RemoveBanner"
+                   value="false" />
+
+            @if (Model.UserType != "1")
+            {
+                <!--
+                    CharityAdmin و CharityUser فقط باید اطلاعات خیریه خود را ارسال کنند.
+                    Backend نیز باید مالکیت کمپین را بر اساس Claim بررسی کند.
+                -->
+                <input type="hidden"
+                       id="campaign-charity-hidden"
+                       name="CharityId"
+                       value="@Model.CharityId" />
+            }
+
+            <div class="row g-3">
+
+                <!-- بنر کمپین -->
+                <div class="col-12 mb-2">
+                    <label class="form-label d-block">
+                        تصویر بنر کمپین
+                    </label>
+
+                    <div id="campaign-banner-container"
+                         class="position-relative d-inline-block border rounded p-2 bg-light mb-2">
+
+                        <!-- تصویر بنر فعلی یا فایل تازه انتخاب‌شده -->
+                        <img id="campaign-banner-preview"
+                             src=""
+                             alt="بنر کمپین"
+                             class="img-fluid rounded"
+                             style="display: none;" />
+
+                        <!-- دکمه حذف بنر -->
+                        <button type="button"
+                                id="remove-campaign-banner-btn"
+                                class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle shadow"
+                                style="display: none; width: 32px; height: 32px; padding: 0; line-height: 1;"
+                                title="حذف بنر"
+                                aria-label="حذف بنر">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                        <!-- در صورت نداشتن بنر نمایش داده می‌شود -->
+                        <div id="campaign-banner-placeholder"
+                             class="text-muted p-4 text-center">
+                            <i class="bx bx-image-alt fs-3 d-block mb-2"></i>
+                            تصویری برای این کمپین ثبت نشده است.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 px-0">
+                        <input class="form-control"
+                               type="file"
+                               id="campaign-banner-input"
+                               name="BannerFile"
+                               accept="image/*" />
+                    </div>
+
+                    <small class="text-muted d-block mt-2">
+                        انتخاب تصویر جدید اختیاری است. با انتخاب فایل جدید، بنر فعلی جایگزین می‌شود.
+                        برای حذف کامل بنر، روی علامت ضربدر تصویر کلیک کنید.
+                    </small>
+                </div>
+
+                <!-- عنوان -->
+                <div class="col-md-6">
+                    <label class="form-label" for="campaign-title">
+                        عنوان کمپین
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input type="text"
+                           id="campaign-title"
+                           name="Title"
+                           class="form-control"
+                           required
+                           placeholder="عنوان کمپین را وارد کنید" />
+                </div>
+
+                <!-- مبلغ -->
+                <div class="col-md-6">
+                    <label class="form-label" for="campaign-total-amount">
+                        مبلغ موردنیاز (ریال)
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input type="number"
+                           id="campaign-total-amount"
+                           name="TotalAmount"
+                           class="form-control"
+                           required
+                           min="0"
+                           placeholder="مبلغ هدف را وارد کنید" />
+                </div>
+
+                <!-- شهر -->
+                <div class="col-md-6">
+                    <label class="form-label" for="campaign-city">
+                        شهر کمپین
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select id="campaign-city"
+                            name="CityId"
+                            class="form-select"
+                            required>
+                        <option value="">در حال دریافت شهرها...</option>
+                    </select>
+                </div>
+
+                <!-- دسته‌بندی‌ها -->
+                <div class="col-md-6">
+                    <label class="form-label" for="campaign-category">
+                        دسته‌بندی‌های کمپین
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select id="campaign-category"
+                            name="CategoryIds"
+                            class="form-select"
+                            multiple="multiple"
+                            required>
+                    </select>
+                </div>
+
+                <!-- انتخاب خیریه فقط برای AdminSystem -->
+                @if (Model.UserType == "1")
+                {
+                    <div class="col-12">
+                        <label class="form-label" for="campaign-charity">
+                            خیریه هدف
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <select id="campaign-charity"
+                                name="CharityId"
+                                class="form-select"
+                                required>
+                        </select>
+                    </div>
+                }
+
+                <!-- تاریخ شروع -->
+                <div class="col-md-6">
+                    <label class="form-label" for="campaign-start-date-display">
+                        تاریخ شروع کمپین
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input type="text"
+                           id="campaign-start-date-display"
+                           class="form-control"
+                           readonly
+                           required
+                           placeholder="تاریخ شروع را انتخاب کنید" />
+
+                    <input type="hidden"
+                           id="campaign-start-date"
+                           name="StartDate" />
+                </div>
+
+                <!-- تاریخ پایان -->
+                <div class="col-md-6">
+                    <label class="form-label" for="campaign-end-date-display">
+                        تاریخ پایان کمپین
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input type="text"
+                           id="campaign-end-date-display"
+                           class="form-control"
+                           readonly
+                           required
+                           placeholder="تاریخ پایان را انتخاب کنید" />
+
+                    <input type="hidden"
+                           id="campaign-end-date"
+                           name="EndDate" />
+                </div>
+
+                <!-- توضیحات -->
+                <div class="col-12">
+                    <label class="form-label" for="campaign-description">
+                        توضیحات و اهداف کمپین
+                    </label>
+
+                    <textarea id="campaign-description"
+                              name="Description"
+                              class="form-control"
+                              rows="5"
+                              placeholder="توضیحات، اهداف و جزئیات کمپین را وارد کنید..."></textarea>
+                </div>
+
+
+
+
+
+                
+                <!-- مدیریت وضعیت برای کاربران خیریه -->
+                @if (Model.UserType != "1")
+                {
+                    <!-- بخش مدیریت وضعیت برای کاربران خیریه (CharityAdmin و CharityUser) -->
+                    <div class="col-12 mt-4" id="charity-status-management-card" style="display: none;">
+                        <div class="card border border-warning bg-light-warning">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                    <div>
+                                        <h6 class="mb-1 text-warning fw-bold">مدیریت وضعیت کمپین</h6>
+                                        <p class="mb-0 text-muted small">
+                                            وضعیت فعلی کمپین:
+                                            <span id="current-status-badge" class="badge bg-secondary fs-7">نامشخص</span>
+                                        </p>
+                                    </div>
+                                    <div id="status-transitions-container" class="d-flex gap-2">
+                                        <!-- دکمه‌های تغییر وضعیت مجاز توسط جاوااسکریپت در اینجا لود خواهند شد -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+
+
+
+
+
+
+                <!-- عملیات -->
+                <div class="col-12 text-end mt-3">
+                    <button type="submit"
+                            id="saveCampaignBtn"
+                            class="btn btn-primary me-2">
+                        <i class="bx bx-save me-1"></i>
+                        ذخیره تغییرات
+                    </button>
+
+                    <a asp-page="/Management/Campaigns"
+                       class="btn btn-label-secondary">
+                        انصراف
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Persian DatePicker -->
+    <script src="https://unpkg.com/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- اسکریپت اختصاصی صفحه؛ باید آخرین فایل باشد -->
+    <script src="~/assets/js/campaign-edit.js" asp-append-version="true"></script>
+}

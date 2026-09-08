@@ -1,0 +1,179 @@
+﻿@* 
+
+
+
+
+
+
+ *@
+
+
+
+
+
+
+
+
+@using AdminPanel.Core.Enums
+
+@{
+    var userType = User.FindFirst("UserType")?.Value;
+
+    var isAdminSystem =
+        userType == ((int)AdminUserType.AdminSystem).ToString();
+
+    var isCharityAdmin =
+        userType == ((int)AdminUserType.CharityAdmin).ToString();
+
+    var isCharityUser =
+        userType == ((int)AdminUserType.CharityUser).ToString();
+
+    // ONLY CharityAdmin and CharityUser can create campaigns
+    var canCreateCampaign =
+        isCharityAdmin ||
+        isCharityUser;
+
+    // AdminSystem and CharityAdmin and CharityUser can access Campaigns and Charities
+    var canManageCampaignsAndCharities =
+        isAdminSystem ||
+        isCharityAdmin ||
+        isCharityUser;
+
+    // ONLY AdminSystem and CharityAdmin can access user management
+    var canManageUsers =
+        isAdminSystem ||
+        isCharityAdmin;
+
+    //It is for showing which page is active
+    var currentPage =
+        ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+}
+
+<!-- Management -->
+<li class="menu-header small text-uppercase">
+    <span class="menu-header-text">مدیریت</span>
+</li>
+
+<!-- Categories -->
+@if (isAdminSystem)
+{
+<li class="menu-item @(ViewContext.RouteData.Values["page"]?.ToString().Contains("Categories") == true ? "active open" : "")">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons ti ti-layout-grid"></i>
+        <div data-i18n="دسته بندی ها">دسته بندی ها</div>
+    </a>
+    <ul class="menu-sub">
+        <li class="menu-item @(ViewContext.RouteData.Values["page"]?.ToString() == "/Management/Categories" ? "active" : "")">
+            <a href="/Management/Categories" class="menu-link">
+                <div data-i18n="فهرست دسته بندی ها">فهرست دسته بندی ها</div>
+            </a>
+        </li>
+    </ul>
+</li>
+
+<!-- Socials -->
+
+    <li class="menu-item @(ViewContext.RouteData.Values["page"]?.ToString().Contains("Socials") == true ? "active open" : "")">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons ti ti-components"></i>
+            <div data-i18n="شبکه های اجتماعی">شبکه های اجتماعی </div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item @(ViewContext.RouteData.Values["page"]?.ToString() == "/Management/Socials" ? "active" : "")">
+                <a href="/Management/Socials" class="menu-link">
+                    <div data-i18n="فهرست شبکه های اجتماعی">فهرست شبکه های اجتماعی</div>
+                </a>
+            </li>
+        </ul>
+    </li>
+}
+
+
+
+@if (canManageCampaignsAndCharities)
+{
+    <!-- Campaigns Management -->
+    <li class="menu-item @(currentPage.Contains("Campaigns") || currentPage.Contains("CreateCampaign") ? "active open" : "")">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons ti ti-id"></i>
+            <div data-i18n="کمپین‌ها">کمپین‌ها</div>
+        </a>
+        <ul class="menu-sub">
+            <!-- Campaigns List -->
+            <li class="menu-item @(currentPage == "/Management/Campaigns" ? "active" : "")">
+                <a href="/Management/Campaigns" class="menu-link">
+                    <div data-i18n="فهرست کمپین‌ها">فهرست کمپین‌ها</div>
+                </a>
+            </li>
+            @if (canCreateCampaign)
+            {
+                <!-- Create a New Campaign -->
+                <li class="menu-item @(currentPage == "/Management/CreateCampaign" ? "active" : "")">
+                    <a href="/Management/CreateCampaign" class="menu-link">
+                        <div data-i18n="ایجاد کمپین جدید">ایجاد کمپین جدید</div>
+                    </a>
+                </li>
+            }
+        </ul>
+    </li>
+
+    <!-- Charities Management -->
+    @if (isAdminSystem)
+    {
+        <!-- AdminSystem: Full Access (List & Create) -->
+        <li class="menu-item @(currentPage.Contains("Charities") || currentPage.Contains("CreateCharity") ? "active open" : "")">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
+                <div data-i18n="خیریه‌ها">خیریه‌ها</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item @(currentPage == "/Management/Charities" ? "active" : "")">
+                    <a href="/Management/Charities" class="menu-link">
+                        <div data-i18n="فهرست خیریه‌ها">فهرست خیریه‌ها</div>
+                    </a>
+                </li>
+                <li class="menu-item @(currentPage == "/Management/CreateCharity" ? "active" : "")">
+                    <a href="/Management/CreateCharity" class="menu-link">
+                        <div data-i18n="ایجاد خیریه جدید">ایجاد خیریه جدید</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    }
+    else if (isCharityAdmin || isCharityUser)
+    {
+        var charityId = User.FindFirst("CharityId")?.Value;
+
+        <li class="menu-item @(currentPage.Contains("Charities") ? "active" : "")">
+            <a href="/Management/Charities?myCharityId=@charityId" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-layout-grid"></i>
+                <div data-i18n="پروفایل خیریه من">پروفایل خیریه من</div>
+            </a>
+        </li>
+    }
+
+
+}
+
+@if (canManageUsers)
+{
+    <!-- User Management -->
+    <li class="menu-item @(currentPage.Contains("Users") || currentPage.Contains("CreateUser") ? "active open" : "")">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons ti ti-users"></i>
+            <div data-i18n="کاربران">کاربران</div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item @(currentPage == "/Management/Users" ? "active" : "")">
+                <a href="/Management/Users" class="menu-link">
+                    <div data-i18n="فهرست کاربران">فهرست کاربران</div>
+                </a>
+            </li>
+            <li class="menu-item @(currentPage == "/Management/CreateUser" ? "active" : "")">
+                <a href="/Management/CreateUser" class="menu-link">
+                    <div data-i18n="ایجاد کاربر جدید">ایجاد کاربر جدید</div>
+                </a>
+            </li>
+        </ul>
+    </li>
+}

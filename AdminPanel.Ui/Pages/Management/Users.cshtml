@@ -1,0 +1,309 @@
+﻿@page
+@using AdminPanel.Core.Enums
+@model AdminPanel.Ui.Pages.Management.UsersModel
+@{
+    ViewData["Title"] = "فهرست کاربران";
+    var userTypeClaim =
+        User.FindFirst("UserType")?.Value ??
+        User.FindFirst("userType")?.Value;
+
+    var isRoot =
+        userTypeClaim == ((int)AdminUserType.AdminSystem).ToString();
+
+}
+
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+}
+
+
+
+@* Retrieve Access Token for authenticating AJAX requests *@
+<meta name="access-token" content="@User.FindFirst("AccessToken")?.Value" />
+
+<meta name="user-type" content="@userTypeClaim" />
+<meta name="current-user-id"
+      content="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+
+
+<script>
+
+    const isCurrentUserRoot = @Html.Raw(isRoot.ToString().ToLower());
+    const apiBaseUrl = "https://localhost:7209";
+
+</script>
+
+
+
+
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table class="datatables-users table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>نام کاربری</th>
+                    <th>موبایل</th>
+                    <th>خیریه</th>
+                    <th>نقش</th>
+                    <th>تاریخ عضویت</th>
+                    <th>اقدامات</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal for displaying user details -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">جزئیات کاربر</h3>
+                    <p class="text-muted">اطلاعات ثبت‌شده برای این کاربر</p>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام و نام خانوادگی</label>
+                        <input type="text" id="det-name" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام کاربری</label>
+                        <input type="text" id="det-username" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">موبایل</label>
+                        <input type="text" id="det-mobile" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نقش</label>
+                        <input type="text" id="det-usertype" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">خیریه</label>
+                        <input type="text" id="det-charity" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">تاریخ عضویت</label>
+                        <input type="text" id="det-created" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">بستن</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- Modal for editing user info -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">ویرایش کاربر</h3>
+                </div>
+
+                <form id="editUserForm" class="row g-3">
+                    <input type="hidden" id="editUserId" name="Id" />
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="editUserName">نام و نام خانوادگی</label>
+                        <input type="text" id="editUserName" name="Name" class="form-control" required />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="editUserUserName">نام کاربری</label>
+                        <input type="text" id="editUserUserName" name="UserName" class="form-control" required />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="editUserMobile">موبایل</label>
+                        <input type="text" id="editUserMobile" name="Mobile" class="form-control" required />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="editUserSex">جنسیت</label>
+                        <select id="editUserSex" name="Sex" class="form-select">
+                            <option value="true">مرد</option>
+                            <option value="false">زن</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 root-only-field d-none">
+                        <label class="form-label" for="editUserType">نقش</label>
+                        <select id="editUserType" name="UserType" class="form-select">
+                            <option value="">در حال بارگذاری...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 root-only-field d-none" id="editUserCharityWrapper">
+                        <label class="form-label" for="editUserCharity">خیریه</label>
+                        <select id="editUserCharity" name="CharityId" class="form-select">
+                            <option value="">انتخاب خیریه</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" id="updateUserBtn" class="btn btn-primary me-sm-3 me-1">به‌روزرسانی</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal">لغو</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- Change Password Modal -->
+<div class="modal fade"
+     id="changePasswordModal"
+     tabindex="-1"
+     aria-labelledby="changePasswordModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">
+                    تغییر رمز عبور
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="بستن">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- شناسه کاربری که قرار است رمز او تغییر کند -->
+                <input type="hidden" id="changePasswordUserId" />
+
+                <!-- این قسمت فقط هنگام تغییر رمز خود کاربر نشان داده می‌شود -->
+                <div class="mb-3 d-none" id="currentPasswordContainer">
+                    <label for="currentPassword" class="form-label">
+                        رمز عبور فعلی
+                    </label>
+
+                    <input type="password"
+                           class="form-control"
+                           id="currentPassword"
+                           autocomplete="current-password" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">
+                        رمز عبور جدید
+                    </label>
+                    <div class="input-group input-group-merge">
+                        <input type="password"
+                               class="form-control"
+                               id="newPassword"
+                               autocomplete="new-password" />
+                        <span class="input-group-text cursor-pointer toggle-password"
+                              data-target="newPassword">
+                            <i class="ti ti-eye"></i>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">
+                        تکرار رمز عبور جدید
+                    </label>
+                    <div class="input-group input-group-merge">
+                        <input type="password"
+                               class="form-control"
+                               id="confirmPassword"
+                               autocomplete="new-password" />
+                        <span class="input-group-text cursor-pointer toggle-password"
+                              data-target="confirmPassword">
+                            <i class="ti ti-eye"></i>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="alert alert-danger d-none mb-0"
+                     id="changePasswordError">
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    انصراف
+                </button>
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="submitChangePassword">
+                    <span id="submitChangePasswordText">ثبت تغییر رمز</span>
+
+                    <span class="spinner-border spinner-border-sm d-none"
+                          id="submitChangePasswordLoading"
+                          role="status"
+                          aria-hidden="true">
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+
+
+
+    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+    <script src="~/assets/js/users-datatable.js"></script>
+}
+
+@* 
+<meta name="access-token" content="@User.FindFirst("AccessToken")?.Value" />
+<meta name="user-type" content="@userTypeClaim" />
+<meta name="current-user-id"
+      content="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" /> *@
+
+<script>
+    window.isCurrentUserRoot = @isRoot.ToString().ToLowerInvariant();
+    window.apiBaseUrl = "https://localhost:7209";
+    window.currentUserId = @(
+        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+        );
+</script>

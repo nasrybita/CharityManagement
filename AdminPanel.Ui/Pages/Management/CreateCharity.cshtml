@@ -1,0 +1,122 @@
+﻿@page
+@model AdminPanel.Ui.Pages.Management.CreateCharityModel
+@{
+    ViewData["Title"] = "ایجاد خیریه";
+}
+
+
+<meta name="access-token" content="@User.FindFirst("AccessToken")?.Value" />
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/vendor/libs/select2/select2.css" />
+    <link rel="stylesheet" href="~/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+}
+
+
+
+<div class="row" id="addCharitySection">
+    <div class="col-xxl">
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">افزودن خیریه جدید</h5>
+                <small class="text-muted float-end">اطلاعات خیریه را کامل وارد نمایید.</small>
+            </div>
+            <div class="card-body">
+                @* <form id="createCharityForm" enctype="multipart/form-data"> *@
+
+                <form id="createCharityForm" method="post" enctype="multipart/form-data">
+
+                    <h6>۱. اطلاعات پایه</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="charity-name">نام خیریه</label>
+                            <input type="text" id="charity-name" name="Name" class="form-control" placeholder="مثلا: مهر آفرین" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="charity-category">دسته‌بندی‌ها (حداکثر ۵ مورد)</label>
+                            <select id="charity-category" name="CategoryIds" class="select2 form-select" multiple>
+                                <!-- این لیست باید از API لود شود -->
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="charity-desc">توضیحات</label>
+                            <textarea id="charity-desc" name="Description" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+                    <h6>۲. اطلاعات تماس و آدرس</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="charity-phone">تلفن ثابت</label>
+                            <input type="text" id="charity-phone" name="Telephone" class="form-control" placeholder="021..." />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="charity-website">وبسایت</label>
+                            <input type="url" id="charity-website" name="Website" class="form-control" placeholder="https://..." />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="charity-manager">نام مدیر</label>
+                            <input type="text" id="charity-manager" name="ManagerName" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="charity-contact-name">نام مسئول</label>
+                            <input type="text" id="charity-contact-name" name="ContactName" class="form-control" placeholder="نام مسئول تماس" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="charity-contact-phone">تلفن مسئول</label>
+                            <input type="text" id="charity-contact-phone" name="ContactPhone" class="form-control" placeholder="09..." />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="charity-address">آدرس کامل</label>
+                            <input type="text" id="charity-address" name="Address" class="form-control" />
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+                    <h6>۳. فایل‌ها (لوگو و بنر)</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="charity-logo">تصویر لوگو</label>
+                            <input type="file" id="charity-logo" name="LogoFile" class="form-control" accept="image/*" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="charity-banner">تصویر بنر</label>
+                            <input type="file" id="charity-banner" name="BannerFile" class="form-control" accept="image/*" />
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+                    <h6>۴. شبکه‌های اجتماعی</h6>
+                    <div id="social-container">
+                        <!-- ردیف‌ها به صورت پویا توسط JavaScript ایجاد می‌شوند -->
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-social-btn">
+                        <i class="ti ti-plus me-1"></i> افزودن شبکه اجتماعی
+                    </button>
+
+                    <div class="pt-4 mt-3 text-end">
+                        <button type="submit" id="saveCharityBtn" class="btn btn-primary me-sm-3 me-1">ثبت خیریه</button>
+                        <button type="reset" class="btn btn-label-secondary">لغو و پاکسازی</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    const charityListUrl = '@Url.Page("/Management/Charities")';
+</script>
+
+@section Scripts {
+
+
+    <script src="~/assets/vendor/libs/select2/select2.js"></script>
+    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+    <script src="~/assets/js/charity-create.js"></script>
+}

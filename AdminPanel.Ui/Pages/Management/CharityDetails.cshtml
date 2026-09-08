@@ -1,0 +1,87 @@
+﻿
+ @page
+@using System.Text.Json
+@model AdminPanel.Ui.Pages.Management.CharityDetailsModel
+
+@{
+    ViewData["Title"] = "جزئیات خیریه";
+
+    var apiBaseUrl = "https://localhost:7209";
+
+    var bannerUrl = string.IsNullOrWhiteSpace(Model.Charity.BannerUrl)
+        ? null
+        : (Model.Charity.BannerUrl.StartsWith("http")
+            ? Model.Charity.BannerUrl
+            : $"{apiBaseUrl}{Model.Charity.BannerUrl}");
+
+    var logoUrl = string.IsNullOrWhiteSpace(Model.Charity.LogoUrl)
+        ? null
+        : (Model.Charity.LogoUrl.StartsWith("http")
+            ? Model.Charity.LogoUrl
+            : $"{apiBaseUrl}{Model.Charity.LogoUrl}");
+}
+
+<div class="container mt-5">
+    @if (!string.IsNullOrEmpty(bannerUrl))
+    {
+        <img src="@bannerUrl" class="w-100 rounded mb-4" style="height:350px;object-fit:cover;" />
+    }
+
+    <div class="card">
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(logoUrl))
+            {
+                <img src="@logoUrl" width="120" height="120" class="rounded-circle mb-3" />
+            }
+
+            <h3>درباره خیریه</h3>
+            <p>@Model.Charity.Description</p>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">اطلاعات تماس</div>
+        <div class="card-body">
+            <p>مدیر: @Model.Charity.ManagerName</p>
+            <p>تلفن: @Model.Charity.Telephone</p>
+            <p>آدرس: @Model.Charity.Address</p>
+            <p>وب سایت: @Model.Charity.Website</p>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">دسته بندی ها</div>
+        <div class="card-body">
+            @if (Model.Charity.Categories != null && Model.Charity.Categories.Any())
+            {
+                foreach (var item in Model.Charity.Categories)
+                {
+                    <span class="badge bg-primary me-1">@item.Name</span>
+                }
+            }
+            else
+            {
+                <span class="text-muted">دسته‌بندی ثبت نشده است.</span>
+            }
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">شبکه های اجتماعی</div>
+        <div class="card-body">
+            @foreach (var item in Model.Charity.Socials)
+            {
+                <p><b>@item.SocialName</b> : <a href="@item.Value">@item.Value</a></p>
+            }
+        </div>
+    </div>
+
+
+
+   
+
+
+    <div class="text-center mt-5">
+        <a href="/Management/Charities" class="btn btn-secondary">بازگشت به لیست خیریه ها</a>
+    </div>
+</div>

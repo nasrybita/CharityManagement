@@ -1,0 +1,181 @@
+﻿@page
+@using AdminPanel.Core.Enums
+@model AdminPanel.Ui.Pages.Management.SocialsModel
+@{
+    ViewData["Title"] = "شبکه‌های اجتماعی";
+
+    var isSystemAdmin =
+        User.FindFirst("UserType")?.Value ==
+        ((int)AdminUserType.AdminSystem).ToString();
+}
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+
+    @* to hide "No" or "Cancel" button in sweet alert messege box after deleting a social *@
+    <style>
+        .swal2-actions .swal2-deny[style*="display: none"],
+        .swal2-actions .swal2-cancel[style*="display: none"] {
+            display: none !important;
+        }
+    </style>
+}
+
+<meta name="access-token"
+      content="@User.FindFirst("AccessToken")?.Value" />
+<meta name="is-system-admin" content="@isSystemAdmin.ToString().ToLower()" />
+
+<!-- DataTable to display socials list -->
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table class="datatables-basic table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>شناسه</th>
+                    <th>نام شبکه اجتماعی</th>
+                    <th>نام اختصاری</th>
+                    <th>تاریخ ایجاد</th>
+                    <th>اقدامات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @* به صورت پویا با استفاده از DataTable پر می‌شود *@
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+<!-- Modal to add a new social -->
+<div class="modal fade" id="addSocialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">افزودن شبکه اجتماعی جدید</h3>
+                    <p class="text-muted">مشخصات شبکه اجتماعی جدید را وارد نمایید</p>
+                </div>
+                <form id="addSocialForm" class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="socialName">نام شبکه اجتماعی</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="ti ti-brand-instagram"></i></span>
+                            <input type="text" id="socialName" name="Name" class="form-control" placeholder="برای مثال: اینستاگرام" required />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="socialAbbreviation">نام اختصاری (Abbreviation)</label>
+                        <input type="text" id="socialAbbreviation" name="Abbreviation" class="form-control" placeholder="برای مثال: Instagram" required />
+                    </div>
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" id="saveSocialBtn" class="btn btn-primary me-sm-3 me-1">ارسال</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">لغو</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Modal to edit social -->
+<div class="modal fade" id="editSocialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">ویرایش شبکه اجتماعی</h3>
+                </div>
+                <form id="editSocialForm" class="row g-3">
+                    <input type="hidden" id="editSocialId" name="Id" />
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="editSocialName">نام شبکه اجتماعی</label>
+                        <input type="text" id="editSocialName" name="Name" class="form-control" required />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label" for="editSocialAbbreviation">نام اختصاری</label>
+                        <input type="text" id="editSocialAbbreviation" name="Abbreviation" class="form-control" required />
+                    </div>
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" id="updateSocialBtn" class="btn btn-primary me-sm-3 me-1">به‌روزرسانی</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal">لغو</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Modal to view social details -->
+<div class="modal fade" id="detailsSocialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <button type="button" class="btn-close m-3 ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+            <div class="modal-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">جزئیات شبکه اجتماعی</h3>
+                    <p class="text-muted mb-0">اطلاعات کامل ثبت‌شده در سیستم</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">شناسه سیستمی</label>
+                        <input type="text" id="detailsId" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">نام شبکه اجتماعی</label>
+                        <input type="text" id="detailsName" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <label class="form-label">نام اختصاری</label>
+                        <input type="text" id="detailsAbbreviation" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">تاریخ ایجاد</label>
+                        <input type="text" id="detailsCreatedAt" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">آخرین ویرایش</label>
+                        <input type="text" id="detailsModifiedAt" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-12 text-center pt-3">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                            بستن
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+    <script src="~/assets/js/socials-datatable.js"></script>
+    <script src="~/assets/js/social-create-modal.js"></script>
+    <script src="~/assets/js/social-edit-modal.js"></script>
+}
+
+

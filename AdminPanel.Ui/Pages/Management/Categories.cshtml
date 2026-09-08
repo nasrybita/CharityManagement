@@ -1,0 +1,154 @@
+﻿@page
+@model AdminPanel.Ui.Pages.Management.CategoriesModel
+@{
+    ViewData["Title"] = "دسته بندی ها";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+}
+
+
+<!-- DataTable to display categories list -->
+<div class="card">
+    <div class="card-datatable table-responsive pt-0">
+        <table class="datatables-basic table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>شناسه</th>
+                    <th>عنوان دسته</th>
+                    <th>تاریخ ایجاد</th>
+                    <th>اقدامات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @* فعلاً خالی است؛ بعداً از Model پر می‌شود *@
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal to add a new category -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">افزودن دسته بندی جدید</h3>
+                    <p class="text-muted">یک عنوان برای ایجاد دسته بندی جدید وارد نمایید</p>
+                </div>
+                <!-- Form Layout Vertical -->
+                <form id="addCategoryForm" class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label" for="categoryName">عنوان دسته بندی</label>
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="ti ti-category"></i></span>
+                            <input type="text" id="categoryName" name="Name" class="form-control" placeholder="برای مثال سلامت و درمان، مسکن، آموزش و غیره" required />
+                        </div>
+                    </div>
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" id="saveCategoryBtn" class="btn btn-primary me-sm-3 me-1">ارسال</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">لغو</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal to edit category -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">ویرایش دسته بندی</h3>
+                </div>
+                <form id="editCategoryForm" class="row g-3">
+                    <input type="hidden" id="editCategoryId" name="Id" />
+                    <div class="col-12">
+                        <label class="form-label" for="editCategoryName">عنوان دسته بندی</label>
+                        <input type="text" id="editCategoryName" name="Name" class="form-control" required />
+                    </div>
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" id="updateCategoryBtn" class="btn btn-primary me-sm-3 me-1">به‌روزرسانی</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal">لغو</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal to view category details -->
+<div class="modal fade" id="detailsCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">جزئیات دسته بندی</h3>
+                    <p class="text-muted">اطلاعات کامل ثبت شده در سیستم</p>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">شناسه سیستمی</label>
+                        <input type="text" id="detailsId" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">عنوان دسته بندی</label>
+                        <input type="text" id="detailsName" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">تاریخ ایجاد</label>
+                        <input type="text" id="detailsCreatedAt" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">آخرین ویرایش</label>
+                        <input type="text" id="detailsModifiedAt" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 text-center mt-4">
+                        <button type="reset" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">بستن</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/ DataTable with Buttons -->
+
+
+
+
+@section Scripts {
+
+
+    <script>
+        // JWT Token
+        const accessToken = '@User.FindFirst("AccessToken")?.Value';
+
+        // UserType (1=AdminSystem, 2=CharityAdmin, 3=CharityUser)
+        const currentUserRole = '@User.FindFirst("UserType")?.Value';
+    </script>
+
+    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+
+
+    <script src="~/assets/js/categories-datatable.js"></script>
+    <script src="~/assets/js/category-create-modal.js"></script>
+    <script src="~/assets/js/category-edit-modal.js"></script>
+
+    
+}
+
+
+
+
+

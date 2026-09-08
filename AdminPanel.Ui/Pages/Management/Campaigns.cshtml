@@ -1,0 +1,82 @@
+﻿@page
+@using AdminPanel.Core.Enums
+@model AdminPanel.Ui.Pages.Management.CampaignsModel
+@{
+    ViewData["Title"] = "لیست کمپین‌ها";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+}
+
+
+<meta name="access-token" content="@User.FindFirst("AccessToken")?.Value" />
+<meta name="user-role" content="@User.FindFirst("UserType")?.Value" />
+
+
+
+<script>
+    const apiBaseUrl = "https://localhost:7209";
+</script>
+
+<div class="card">
+    <div class="card-header border-bottom">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label" for="campaignStatusFilter">فیلتر بر اساس وضعیت</label>
+                <select id="campaignStatusFilter" class="form-select">
+                    <option value="">همه وضعیت‌ها</option>
+                    <option value="1">ایجاد شده</option>
+                    <option value="2">تایید شده</option>
+                    <option value="8">تعلیق توسط سیستم</option> 
+                    <option value="9">تعلیق توسط خیریه</option> 
+                    <option value="3">رد شده</option>
+                    <option value="4">تعلیق شده</option>
+                    <option value="5">فعال‌سازی مجدد</option>
+                    <option value="6">تأمین مالی موفق</option>
+                    <option value="7">تأمین مالی ناموفق</option>
+                </select>
+            </div>
+
+            <!-- Charity filter -->
+            <div class="col-md-4">
+                <label class="form-label" for="charityFilter">فیلتر خیریه</label>
+                <select id="charityFilter" class="form-select">
+                    <option value="">همه خیریه‌ها</option>
+                </select>
+            </div>
+
+            <!-- Category filter -->
+            <div class="col-md-4">
+                <label class="form-label" for="categoryFilter">فیلتر دسته‌بندی</label>
+                <select id="categoryFilter" class="form-select">
+                    <option value="">همه دسته‌ها</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-datatable table-responsive pt-0">
+        <table class="datatables-campaigns table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>عنوان کمپین</th>
+                    <th>خیریه</th>
+                    <th>تاریخ شروع</th>
+                    <th>تاریخ پایان</th>
+                    <th>مبلغ هدف</th>
+                    <th>مبلغ جمع‌آوری‌شده</th>
+                    <th>وضعیت</th>
+                    <th>تاریخ ایجاد</th>
+                    <th>اقدامات</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+    <script src="~/assets/js/campaigns-datatable.js" asp-append-version="true"></script>
+}

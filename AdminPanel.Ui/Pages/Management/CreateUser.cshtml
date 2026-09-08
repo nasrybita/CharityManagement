@@ -1,0 +1,242 @@
+﻿@page
+@using AdminPanel.Core.Enums
+@model AdminPanel.Ui.Pages.Management.CreateUserModel
+
+@{
+    ViewData["Title"] = "ایجاد کاربر جدید";
+
+    var userType = User.FindFirst("UserType")?.Value;
+
+    var isRoot = userType ==
+                 ((int)AdminUserType.AdminSystem).ToString();
+
+    var isCharityAdmin = userType ==
+                 ((int)AdminUserType.CharityAdmin).ToString();
+}
+
+
+<meta name="access-token" content="@User.FindFirst("AccessToken")?.Value" />
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/vendor/libs/select2/select2.css" />
+    <link rel="stylesheet" href="~/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+}
+
+
+
+
+    <div class="row" id="addUserSection">
+
+        <div class="col-xxl">
+
+            <div class="card mb-4">
+
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">افزودن کاربر جدید</h5>
+                    <small class="text-muted float-end">
+                        اطلاعات حساب کاربر را وارد نمایید.
+                    </small>
+                </div>
+
+
+                <div class="card-body">
+
+                    <form id="createUserForm">
+
+
+                        <h6>۱. اطلاعات حساب کاربری</h6>
+
+
+                        <div class="row g-3">
+
+
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    نام و نام خانوادگی
+                                </label>
+
+                                <input type="text"
+                                       id="user-fullname"
+                                       class="form-control"
+                                       required />
+                            </div>
+
+
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    نام کاربری (انگلیسی)
+                                </label>
+
+                                <input type="text"
+                                       id="user-username"
+                                       class="form-control"
+                                       required />
+
+                            </div>
+
+
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    رمز عبور
+                                </label>
+
+                                <input type="password"
+                                       id="user-password"
+                                       class="form-control"
+                                       required />
+
+                            </div>
+
+
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    شماره موبایل
+                                </label>
+
+                                <input type="text"
+                                       id="user-mobile"
+                                       class="form-control"
+                                       required />
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <hr class="my-4" />
+
+
+
+
+                    @if (isRoot)
+                    {
+                        <h6>
+                            ۲. دسترسی و انتساب سازمانی
+                        </h6>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    نوع دسترسی (نقش)
+                                </label>
+
+                                <select id="user-type" class="form-select">
+                                    <option value="">
+                                        در حال بارگذاری...
+                                    </option>
+                                </select>
+
+                            </div>
+
+
+                            <div id="charity-selection-wrapper" class="col-md-6">
+
+                                <label class="form-label">
+                                    خیریه
+                                </label>
+
+                                <select id="user-charity" class="form-select">
+                                    <option value="">
+                                        انتخاب خیریه
+                                    </option>
+                                </select>
+
+                            </div>
+
+                        </div>
+                    }
+
+
+
+                        <div class="pt-4 mt-3 text-end">
+
+
+                            <button type="submit"
+                                    id="saveUserBtn"
+                                    class="btn btn-primary">
+
+                                ثبت کاربر
+
+                            </button>
+
+
+                            <button type="reset"
+                                    class="btn btn-label-secondary">
+
+                                لغو و پاکسازی
+
+                            </button>
+
+
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+<script>
+
+
+    const isCurrentUserRoot =
+        @Html.Raw(isRoot.ToString().ToLower());
+
+
+    const currentUserCharityId =
+        @Html.Raw(Json.Serialize(Model.CurrentUserCharityIdClaim));
+
+
+    const userListUrl =
+        '@Url.Page("/Management/Users")';
+
+
+    const apiBaseUrl =
+        "https://localhost:7209";
+
+
+</script>
+
+
+
+
+@section Scripts {
+
+    <script>
+        console.log('@User.FindFirst("UserType")?.Value');
+    </script>
+
+
+    <script src="~/assets/vendor/libs/select2/select2.js"></script>
+
+    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+
+    <script src="~/assets/js/user-create.js"></script>
+
+
+}

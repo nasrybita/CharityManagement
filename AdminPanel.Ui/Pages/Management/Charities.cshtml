@@ -1,0 +1,338 @@
+﻿@page
+@model AdminPanel.Ui.Pages.Management.CharitiesModel
+@{ 
+
+}
+
+
+
+
+@* <label>Show <select name="DataTables_Table_1_length" aria-controls="DataTables_Table_1" class="form-select"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label> *@
+
+
+<!-- در ابتدای بدنه فایل یا داخل فرم ها -->
+@Html.AntiForgeryToken()
+
+<!-- Modal for Edit -->
+<div class="modal fade" id="editCharityModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">ویرایش اطلاعات خیریه</h3>
+                </div>
+                <form id="formEditCharity" class="row g-3">
+                    <input type="hidden" id="editCharityId" name="Id" />
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام خیریه</label>
+                        <input type="text" id="editName" name="Name" class="form-control" />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">تلفن</label>
+                        <input type="text" id="editPhone" name="Telephone" class="form-control" />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">وبسایت</label>
+                        <input type="text" id="editWebsite" name="Website" class="form-control" />
+                    </div>
+                    <!-- سایر فیلدها را اینجا اضافه کن -->
+
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-primary me-sm-3 me-1">ثبت تغییرات</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal">انصراف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@* <!-- Modal to view category details -->
+<div class="modal fade" id="detailsCharityModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 p-md-5">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">جزئیات خیریه</h3>
+                    <p class="text-muted">اطلاعات کامل ثبت شده در سیستم</p>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">شناسه سیستمی</label>
+                        <input type="text" id="detailsId" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام خیریه</label>
+                        <input type="text" id="detailsName" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">توضیحات درمورد خیریه </label>
+                        <input type="text" id="detailsDescription" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">وبسایت خیریه</label>
+                        <input type="text" id="detailsWebsite" class="form-control bg-light" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">آدرس خیریه</label>
+                        <input type="text" id="detailsAddres" class="form-control bg-light" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">شماره تلفن ثابت خیریه</label>
+                        <input type="text" id="detailsPhone" class="form-control bg-light" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام مدیر خیریه</label>
+                        <input type="text" id="detailsManager" class="form-control bg-light" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">نام مخاطب خیریه</label>
+                        <input type="text" id="detailsContactName" class="form-control bg-light" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">شماره تلفن همراه خیریه</label>
+                        <input type="text" id="detailsPhoneNumber" class="form-control bg-light" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">تاریخ ایجاد خیریه</label>
+                        <input type="text" id="detailsCreated" class="form-control bg-light" readonly />
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">آخرین بروزرسانی خیریه</label>
+                        <input type="text" id="detailsModified" class="form-control bg-light" readonly />
+                    </div>
+                    <div class="col-12 text-center mt-4">
+                        <button type="reset" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">بستن</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end Modal to view category details -->
+ *@
+
+
+
+
+<!-- Modal Confirm Delete Charity -->
+<div class="modal fade" id="deleteCharityModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+            <div class="modal-header">
+                <h5 class="modal-title">تأیید حذف</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <input type="hidden" id="deleteCharityId" />
+
+                <div class="mb-3">
+                    <i class="ti ti-alert-triangle text-warning" style="font-size: 48px;"></i>
+                </div>
+
+                <h5 class="mb-2">آیا از حذف این خیریه اطمینان دارید؟</h5>
+                <p class="text-muted mb-0">
+                    این عملیات قابل بازگشت نیست.
+                </p>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button"
+                        class="btn btn-label-secondary"
+                        data-bs-dismiss="modal">
+                    انصراف
+                </button>
+
+                <button type="button"
+                        class="btn btn-danger"
+                        id="btnConfirmDeleteCharity">
+                    حذف
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!--/ Column Search -->
+
+<hr class="my-5" />
+
+<!-- Advanced Search -->
+  
+<div class="card">
+ 
+   
+       <!-- بخش هدر جدید جدول با توضیحات راهنما -->
+ 
+    <div class="card-header d-flex justify-content-between align-items-center">
+      
+
+        @* <button class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addCharityModal">
+            افزودن خیریه
+        </button> *@
+        @if (Model.CanCreateCharity)
+        {
+            <a asp-page="./CreateCharity" class="btn btn-primary">
+                <i class="ti ti-plus me-1"></i>
+                افزودن خیریه
+            </a>
+        }
+
+    </div>
+
+
+
+
+
+
+
+    <!--Search Form -->
+    <div class="card-body">
+
+        <div class="card-header border-bottom d-flex flex-column gap-1">
+            <h5 class="card-title mb-0">جستجوی پیشرفته و فیلتر خیریه‌ها</h5>
+            <small class="text-muted">
+                جهت فیلتر کردن، مقادیر مورد نظر را وارد کرده و روی دکمه جستجو کلیک کنید.
+            </small>
+        </div>
+
+        <form class="dt_adv_search" method="POST" id="charitySearchForm" onsubmit="return false;">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row g-3">
+
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            <label class="form-label">نام خیریه:</label>
+                            <input type="text"
+                                   id="searchCharityName"
+                                   class="form-control"
+                                   placeholder="نام خیریه را وارد کنید" />
+                        </div>
+
+                        @* <div class="col-12 col-sm-6 col-lg-4">
+                            <label class="form-label">تلفن تماس:</label>
+                            <input type="text"
+                                   id="searchPhone"
+                                   class="form-control"
+                                   placeholder="021-xxxxxxxx" />
+                        </div> *@
+
+                        @* <div class="col-12 col-sm-6 col-lg-4">
+                            <label class="form-label">وبسایت:</label>
+                            <input type="text"
+                                   id="searchWebsite"
+                                   class="form-control"
+                                   placeholder="www.charityname.ir" />
+                        </div> *@
+
+                        @* <div class="col-12 col-sm-6 col-lg-4">
+                            <label class="form-label">تاریخ ثبت:</label>
+                            <div class="mb-0">
+                                <input type="text"
+                                       id="searchCreatedAt"
+                                       class="form-control dt-date flatpickr-range"
+                                       placeholder="انتخاب بازه زمانی"
+                                       name="dt_date" />
+                                <input type="hidden"
+                                       id="startCreatedAt"
+                                       class="start_date"
+                                       name="value_from_start_date" />
+                                <input type="hidden"
+                                       id="endCreatedAt"
+                                       class="end_date"
+                                       name="value_from_end_date" />
+                            </div>
+                        </div> *@
+
+                        <div class="col-12">
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <button type="button" id="btnSearchFilters" class="btn btn-primary">
+                                    <i class="ti ti-search me-1"></i>
+                                    جستجو
+                                </button>
+
+                                <button type="button" id="btnClearFilters" class="btn btn-label-secondary">
+                                    <i class="ti ti-refresh me-1"></i>
+                                    پاک کردن فیلترها
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!--Search Form -->
+
+
+
+    <hr class="mt-0" />
+     <h5 class="mb-0">لیست خیریه ها</h5>
+    <div class="card-datatable table-responsive">
+        <table class="dt-advanced-search table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>شناسه </th>
+                    <th>نام خیریه</th>
+                    <th>تلفن تماس</th>
+                    <th>وبسایت</th>
+                    <th>تاریخ ثبت</th>
+                    <th>عملیات</th> 
+                
+                </tr>
+            </thead>
+        
+        </table>
+    </div>
+</div>
+
+@* <ul class="pagination"><li class="paginate_button page-item previous disabled" id="DataTables_Table_1_previous"><a href="#" aria-controls="DataTables_Table_1" data-dt-idx="previous" tabindex="0" class="page-link">Previous</a></li><li class="paginate_button page-item next disabled" id="DataTables_Table_1_next"><a href="#" aria-controls="DataTables_Table_1" data-dt-idx="next" tabindex="0" class="page-link">Next</a></li></ul>
+
+<div class="dataTables_info" id="DataTables_Table_1_info" role="status" aria-live="polite">Showing 0 to 0 of 0 entries</div> *@
+@section Scripts {
+
+
+ 
+
+
+
+    <script>
+        const charityPermissions = {
+            canEditAll: @(Model.CanEditAllCharities ? "true" : "false"),
+            canEditOwnOnly: @(Model.CanEditOwnCharityOnly ? "true" : "false"),
+            currentCharityId: @(Model.CurrentCharityId.HasValue? Model.CurrentCharityId.Value.ToString() : "null")
+        };
+    </script>
+
+
+
+
+    <script src="~/assets/js/Charity.js"></script>
+    @* <script src="~/assets/js/CharityEdit.js"></script> *@
+    <script src="~/assets/js/CharityDelete.js"></script>
+    
+}

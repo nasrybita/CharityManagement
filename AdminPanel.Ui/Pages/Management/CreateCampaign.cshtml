@@ -1,0 +1,135 @@
+﻿@page
+@model AdminPanel.Ui.Pages.Management.CreateCampaignModel
+
+@{
+    ViewData["Title"] = "ایجاد کمپین جدید";
+}
+
+
+<meta name="access-token" content="@Model.AccessToken" />
+<meta name="user-type" content="@Model.UserType" />
+<meta name="user-charity-id" content="@Model.CharityId" />
+
+@section Styles {
+    <link rel="stylesheet" href="~/assets/vendor/libs/select2/select2.css" />
+    <link rel="stylesheet" href="~/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+
+
+    <!-- اضافه کردن استایل تقویم شمسی -->
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+
+}
+
+<div class="row" id="addCampaignSection">
+    <div class="col-xxl">
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">افزودن کمپین جدید</h5>
+                <small class="text-muted float-end">اطلاعات کمپین را کامل وارد نمایید.</small>
+            </div>
+
+            <div class="card-body">
+                <form id="createCampaignForm" enctype="multipart/form-data" method="post">
+                    <h6>۱. اطلاعات پایه کمپین</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="campaign-title">عنوان کمپین</label>
+                            <input type="text" id="campaign-title" name="Title" class="form-control" placeholder="مثال: تامین تجهیزات گرمایشی مدارس" required />
+                        </div>
+
+                        @if (Model.UserType == 1) // AdminSystem
+                        {
+                            <div class="col-md-6">
+                                <label class="form-label" for="campaign-charity">خیریه هدف</label>
+                                <select id="campaign-charity" name="CharityId" class="select2 form-select" required>
+                                    <option value="">انتخاب خیریه...</option>
+                                </select>
+                            </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" id="campaign-charity-hidden" name="CharityId" value="@Model.CharityId" />
+                        }
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="campaign-category">دسته‌بندی‌های کمپین</label>
+                            <select id="campaign-category" name="CategoryIds" class="select2 form-select" multiple required>
+                                <!-- لیست از طریق AJAX پر شود -->
+                            </select>
+                            <small class="text-muted">دسته‌بندی‌ها باید با حوزه‌های مجاز خیریه همخوانی داشته باشند.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label" for="campaign-city">شهر</label>
+                            <select id="campaign-city" name="CityId" class="select2 form-select" required>
+                                <option value="">انتخاب شهر...</option>
+                                <option value="1">تهران</option>
+                                <option value="2">ارومیه</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="campaign-desc">توضیحات و اهداف کمپین</label>
+                            <textarea id="campaign-desc" name="Description" class="form-control" rows="3" placeholder="توضیحات مربوط به اهداف کمپین..."></textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+                    <h6>۲. اهداف مالی و بازه زمانی</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="campaign-total-amount">مبلغ مورد نیاز (ریال)</label>
+                            <input type="number" id="campaign-total-amount" name="TotalAmount" class="form-control" placeholder="مثال: 50000000" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label" for="campaign-start-date-display">تاریخ شروع</label>
+                            <input type="text" id="campaign-start-date-display" class="form-control pdate-picker" placeholder="انتخاب تاریخ شروع" readonly required />
+                            <input type="hidden" id="campaign-start-date" name="StartDate" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label" for="campaign-end-date-display">تاریخ پایان</label>
+                            <input type="text" id="campaign-end-date-display" class="form-control pdate-picker" placeholder="انتخاب تاریخ پایان" readonly required />
+                            <input type="hidden" id="campaign-end-date" name="EndDate" />
+                        </div>
+
+                        
+                    </div>
+
+                    <hr class="my-4" />
+                    <h6>۳. رسانه و فایل‌ها</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="campaign-banner">تصویر بنر کمپین</label>
+                            <input type="file" id="campaign-banner" name="BannerFile" class="form-control" accept="image/*" />
+                        </div>
+                    </div>
+
+                    <div class="pt-4 mt-3 text-end">
+                        <button type="submit" id="saveCampaignBtn" class="btn btn-primary me-sm-3 me-1">ثبت کمپین</button>
+                        <button type="reset" class="btn btn-label-secondary">لغو و پاکسازی</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div> 
+
+<script>
+    const campaignListUrl = '@Url.Page("/Management/Campaigns")';
+</script>
+
+@section Scripts {
+    <script src="~/assets/vendor/libs/select2/select2.js"></script>
+    <script src="~/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+
+
+    <!-- اضافه کردن کتابخانه‌های تقویم شمسی -->
+    <script src="https://unpkg.com/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+
+
+    <script src="~/assets/js/campaign-create.js"></script>
+}
