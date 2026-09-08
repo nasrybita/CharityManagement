@@ -1,4 +1,4 @@
-﻿# 🤝 Charity & Campaign Management Platform (Admin Panel)
+﻿# Charity & Campaign Management Platform (Admin Panel)
 
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-WebAPI_%26_RazorPages-2C8EBB)
@@ -20,7 +20,7 @@ The solution follows clean architectural separation and domain-driven practices 
 ├── 📂 AdminPanel.Infrastructure  # EF Core DbContext, Repositories, JWT & Storage
 ├── 📂 AdminPanel.Api             # RESTful API Endpoints & Auth Controllers
 └── 📂 AdminPanel.UI              # Razor Pages Web UI with Vuexy Theme & AJAX Modals
-
+```
 
 
 ## ✨ Key Features
@@ -44,61 +44,49 @@ The solution follows clean architectural separation and domain-driven practices 
 *   **Database:** Microsoft SQL Server
 *   **Authentication:** JWT (JSON Web Tokens) & Custom Claim-based Authorization
 *   **Frontend / UI:** Razor Pages, Bootstrap 5, Vuexy Admin Template, JavaScript (Async/Fetch APIs)
-`
 
 
 
 
 
 
-## 🚀 Getting Started
 
-### 1. Prerequisites
+## Getting Started
 
-*   **.NET 8.0 SDK**
-*   **SQL Server 2019+** or **LocalDB**
-*   **Visual Studio 2022** or **VS Code**
+### Prerequisites
+- **.NET 8.0 SDK**
+- ** SQL Server 2019+ or LocalDB**
+- **Visual Studio 2022 or VS Code**
 
-### 2. Database Setup
+### Database Setup
+- Open SQL Server Management Studio (SSMS).
+- Execute the setup script located at Database/CharityAdminDb_Script.sql to generate tables and seed data.
+- Configuration
+- Duplicate AdminPanel.Api/appsettings.Example.json as appsettings.json.
+- Update your local SQL connection string in the ConnectionStrings.DefaultConnection field.
 
-*   Open **SQL Server Management Studio (SSMS)**.
-*   Execute the setup script located at `Database/CharityAdminDb_Script.sql` to generate tables and seed data.
-
-### 3. Configuration
-
-*   Duplicate `AdminPanel.Api/appsettings.Example.json` as `appsettings.json`.
-*   Update your local SQL connection string in the `ConnectionStrings.DefaultConnection` field.
-`
-
-
-`` `json
+```json
 {
-  "ConnectionStrings": {
+"ConnectionStrings": {
 "DefaultConnection": "Server=localhost;Database=CharityAdminDb;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
 }
-`` `
+}
+```
 
-
-
-
-
-### 4. Run the Project
-
+## Run the Project
 You can set multiple startup projects in Visual Studio, or run them manually from your terminal:
 
-# Run API
-`$ dotnet run --project AdminPanel.Api` 
+### Run API
 
-# Run Admin Web UI
+`$ dotnet run --project AdminPanel.Api`
+
+Run Admin Web UI
+
 `$ dotnet run --project AdminPanel.UI`
 
 
-
-
-## 👨‍💻 Author & Contributions
+## Author & Contributions
 
 Developed with precision and clean code principles.
 
 Feel free to open [issues](../../issues) or submit [pull requests](../../pulls)! 🤝
-`
