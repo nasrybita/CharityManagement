@@ -51,54 +51,41 @@ The solution follows clean architectural separation and domain-driven practices 
 
 
 
-## 🚀 Getting Started
+## Getting Started
 
-### 1. Prerequisites
+### Prerequisites
+- **.NET 8.0 SDK**
+- ** SQL Server 2019+ or LocalDB**
+- **Visual Studio 2022 or VS Code**
 
-*   **.NET 8.0 SDK**
-*   **SQL Server 2019+** or **LocalDB**
-*   **Visual Studio 2022** or **VS Code**
-
-### 2. Database Setup
-
-*   Open **SQL Server Management Studio (SSMS)**.
-*   Execute the setup script located at `Database/CharityAdminDb_Script.sql` to generate tables and seed data.
-
-### 3. Configuration
-
-*   Duplicate `AdminPanel.Api/appsettings.Example.json` as `appsettings.json`.
-*   Update your local SQL connection string in the `ConnectionStrings.DefaultConnection` field.
-`
-
-
-`` `json
+### Database Setup
+Open SQL Server Management Studio (SSMS).
+Execute the setup script located at Database/CharityAdminDb_Script.sql to generate tables and seed data.
+Configuration
+Duplicate AdminPanel.Api/appsettings.Example.json as appsettings.json.
+Update your local SQL connection string in the ConnectionStrings.DefaultConnection field.
+```json
 {
-  "ConnectionStrings": {
-"DefaultConnection": "Server=localhost;Database=CharityAdminDb;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
+“ConnectionStrings”: {
+“DefaultConnection”: “Server=localhost;Database=CharityAdminDb;Trusted_Connection=True;TrustServerCertificate=True;”
 }
-`` `
+}
+```
 
-
-
-
-
-### 4. Run the Project
-
+## Run the Project
 You can set multiple startup projects in Visual Studio, or run them manually from your terminal:
 
-# Run API
-`$ dotnet run --project AdminPanel.Api` 
+### Run API
 
-# Run Admin Web UI
+`$ dotnet run --project AdminPanel.Api`
+
+Run Admin Web UI
+
 `$ dotnet run --project AdminPanel.UI`
 
 
-
-
-## 👨‍💻 Author & Contributions
+## Author & Contributions
 
 Developed with precision and clean code principles.
 
 Feel free to open [issues](../../issues) or submit [pull requests](../../pulls)! 🤝
-`
