@@ -55,12 +55,12 @@ The solution follows clean architectural separation and domain-driven practices 
 
 ### Prerequisites
 - **.NET 8.0 SDK**
-- ** SQL Server 2019+ or LocalDB**
+- **SQL Server 2019+ or LocalDB**
 - **Visual Studio 2022 or VS Code**
 
 ### Database Setup
 - Open SQL Server Management Studio (SSMS).
-- Execute the setup script located at Database/CharityAdminDb_Script.sql to generate tables and seed data.
+- Execute the setup script located at Database/CharitySchemaAndData.sql to generate tables and seed data.
 - Configuration
 - Duplicate AdminPanel.Api/appsettings.Example.json as appsettings.json.
 - Update your local SQL connection string in the ConnectionStrings.DefaultConnection field.
@@ -68,7 +68,7 @@ The solution follows clean architectural separation and domain-driven practices 
 ```json
 {
 "ConnectionStrings": {
-"DefaultConnection": "Server=localhost;Database=CharityAdminDb;Trusted_Connection=True;TrustServerCertificate=True;"
+"DefaultConnection": "Server=.;Database=CharityDb;User Id=YOUR_USER;Password=YOUR_PASSWORD;TrustServerCertificate=True"
 }
 }
 ```
@@ -89,4 +89,3 @@ Run Admin Web UI
 
 Developed with precision and clean code principles.
 
-Feel free to open [issues](../../issues) or submit [pull requests](../../pulls)! 🤝
