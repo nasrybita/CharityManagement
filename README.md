@@ -1,4 +1,4 @@
-﻿# Charity & Campaign Management Platform (Admin Panel)
+# Charity & Campaign Management Platform (Admin Panel)
 
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-WebAPI_%26_RazorPages-2C8EBB)
@@ -14,7 +14,7 @@ A comprehensive, scalable, and modular **Charity & Campaign Management Solution*
 ## 🏛 Solution Architecture
 
 The solution follows clean architectural separation and domain-driven practices divided into 5 focused layers:
-```text
+
 ├── 📂 AdminPanel.Core            # Domain Models, Enums & Status State Helpers
 ├── 📂 AdminPanel.Application     # DTOs, Business Interfaces, Services, Security
 ├── 📂 AdminPanel.Infrastructure  # EF Core DbContext, Repositories, JWT & Storage
@@ -44,7 +44,7 @@ The solution follows clean architectural separation and domain-driven practices 
 *   **Database:** Microsoft SQL Server
 *   **Authentication:** JWT (JSON Web Tokens) & Custom Claim-based Authorization
 *   **Frontend / UI:** Razor Pages, Bootstrap 5, Vuexy Admin Template, JavaScript (Async/Fetch APIs)
-`
+
 
 
 
@@ -59,11 +59,12 @@ The solution follows clean architectural separation and domain-driven practices 
 - **Visual Studio 2022 or VS Code**
 
 ### Database Setup
-Open SQL Server Management Studio (SSMS).
-Execute the setup script located at Database/CharityAdminDb_Script.sql to generate tables and seed data.
-Configuration
-Duplicate AdminPanel.Api/appsettings.Example.json as appsettings.json.
-Update your local SQL connection string in the ConnectionStrings.DefaultConnection field.
+- Open SQL Server Management Studio (SSMS).
+- Execute the setup script located at Database/CharityAdminDb_Script.sql to generate tables and seed data.
+- Configuration
+- Duplicate AdminPanel.Api/appsettings.Example.json as appsettings.json.
+- Update your local SQL connection string in the ConnectionStrings.DefaultConnection field.
+
 ```json
 {
 “ConnectionStrings”: {
