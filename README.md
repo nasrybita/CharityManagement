@@ -14,13 +14,13 @@ A comprehensive, scalable, and modular **Charity & Campaign Management Solution*
 ## 🏛 Solution Architecture
 
 The solution follows clean architectural separation and domain-driven practices divided into 5 focused layers:
-
+```text
 ├── 📂 AdminPanel.Core            # Domain Models, Enums & Status State Helpers
 ├── 📂 AdminPanel.Application     # DTOs, Business Interfaces, Services, Security
 ├── 📂 AdminPanel.Infrastructure  # EF Core DbContext, Repositories, JWT & Storage
 ├── 📂 AdminPanel.Api             # RESTful API Endpoints & Auth Controllers
 └── 📂 AdminPanel.UI              # Razor Pages Web UI with Vuexy Theme & AJAX Modals
-
+```
 
 
 ## ✨ Key Features
