@@ -1,4 +1,4 @@
-﻿# Charity & Campaign Management Platform (Admin Panel)
+# Charity & Campaign Management Platform (Admin Panel)
 
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-WebAPI_%26_RazorPages-2C8EBB)
