@@ -61,8 +61,7 @@ The solution follows clean architectural separation and domain-driven practices 
 ### Database Setup
 - Open SQL Server Management Studio (SSMS).
 - Execute the setup script located at Database/CharitySchemaAndData.sql to generate tables and seed data.
-- Configuration
-- Duplicate AdminPanel.Api/appsettings.Example.json as appsettings.json.
+- Duplicate AdminPanel.Api/appsettings.Development.json as appsettings.json.
 - Update your local SQL connection string in the ConnectionStrings.DefaultConnection field.
 
 ```json
@@ -85,7 +84,8 @@ Run Admin Web UI
 `$ dotnet run --project AdminPanel.UI`
 
 
-## Author & Contributions
 
-Developed with precision and clean code principles.
+## 👤 Author
+
+[![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github)](https://github.com/nasrybita)
 
